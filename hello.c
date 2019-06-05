@@ -24,8 +24,10 @@ int main(int argc, char **argv){
     bool redraw = true;
     bool doexit = false;
     bool gravity = true;
+    bool jumping = false;
+    bool charStop = false;
     const float gravityForce = 4.0;
-    const float jumpSpeed = 4.0;
+    const float jumpSpeed = 6.0;
 
     al_init();
     if(!al_init()){
@@ -91,16 +93,25 @@ int main(int argc, char **argv){
     al_start_timer(timer);
 
     while(!doexit){
+    
         ALLEGRO_EVENT ev;
         al_wait_for_event(event_queue, &ev);
-        
+
+        image_y = 430;
+    
+        if(jumping == true){
+            image_y += gravityForce;
+        }
+
         if(ev.type == ALLEGRO_EVENT_TIMER) {
 
             if(key[KEY_SPACE] && gravity == true){
-                gravity = false;
-                image_y -= 4.0 * jumpSpeed;
+                jumping = true;
+                image_y -= 7.0 * jumpSpeed;
+                image_x -= -1.0 * 2.0;
+                charStop = true;
             }
-        
+
             if(key[KEY_LEFT] && image_x >= 4.0){
                 image_x -= 4.0;
             }
@@ -163,10 +174,10 @@ int main(int argc, char **argv){
 
         if(redraw && al_is_event_queue_empty(event_queue)){
             redraw = false;
-            gravity = true;     
             al_draw_bitmap(image, 0, 0, 0);
             al_draw_bitmap(character, image_x, image_y, 0);
             al_flip_display();
+
         }
 
     }
