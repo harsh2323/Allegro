@@ -129,11 +129,13 @@ int main(int argc, char **argv){
         ALLEGRO_EVENT ev;
         al_wait_for_event(event_queue, &ev);
 
-
         if(jumping == true && image_y != 430){
-            do{
-                image_y += 4.0 * jumpSpeed;
-            }while(image_y != 430);
+            image_y += 4.0 * jumpSpeed;
+            jumping = false;
+            // do{
+            //     image_y += 4.0 * jumpSpeed;
+            //     jumping = false;
+            // }while(image_y != 430);
         }
 
         if(ev.type == ALLEGRO_EVENT_TIMER) {
@@ -145,12 +147,13 @@ int main(int argc, char **argv){
                 frameCount = 0;
                 }
 
-            if(key[KEY_SPACE] && gravity == true){
+            if(key[KEY_SPACE]){
                 jumping = true;
-
                 image_y -= 4.0 * jumpSpeed;
-                if(++frameCount >= frameDelay){
-                    if(++currFrame >= maxFrame){
+                frameCount++;
+                if(frameCount >= frameDelay){
+                    currFrame++;
+                    if(currFrame >= maxFrame){
                         currFrame = 0;
                     }
                     frameCount = 0;
@@ -221,8 +224,13 @@ int main(int argc, char **argv){
         if(redraw && al_is_event_queue_empty(event_queue)){
             redraw = false;
             al_draw_bitmap(image, 0, 0, 0);
-            al_draw_bitmap(character[currFrame], 0, 0, 0);
-            al_draw_bitmap(jump[currFrame], image_x, image_y, 0);
+            
+            if(jumping == true){
+                al_draw_bitmap(jump[currFrame], image_x, image_y, 0);
+            }
+            else{
+                al_draw_bitmap(character[currFrame], image_x, image_y, 0);
+            }
             al_flip_display();
 
         }
